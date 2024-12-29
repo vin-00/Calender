@@ -86,8 +86,15 @@ DayWise is a user-friendly event management application designed to help you eff
 
 - `components/`: Contains reusable UI components like the calendar and event form.
 - `context/`: Contains React Context for centralized state management.
-- `utils/`: Utility functions for date and time handling.
-- `App.js`: The main app component.
+- `utils/`: Utility functions for event handling and color coding .
+- `App.jsx`: The main app component.
+
+## Contact
+
+Feel free to reach out to me via:
+
+- **Email:** winkhatri292004@gmail.com
+---
 
 
 
