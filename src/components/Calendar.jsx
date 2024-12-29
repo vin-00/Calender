@@ -1,47 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
-import './Calendar.css'; // Import custom styles
-import EventModal from './EventModal';
-const getEventColor = (eventType) => {
-    switch (eventType) {
-        case 'work':
-            return '#4285f4';  // Blue for work
-        case 'personal':
-            return '#34a853';  // Green for personal
-        case 'others':
-            return '#fbbc05';  // Yellow for others
-        default:
-            return '#ccc';     // Default color
-    }
-};
+import './Calendar.css'; 
+
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import Paper from '@mui/material/Paper';
+import { styled } from '@mui/material/styles';
+
+import Grid from '@mui/material/Grid2';
+
+import EventDrawer from './EventDrawer';
+
+import getBGC from "../utils/getBGC"
+
+const Item = styled(Paper)(({ theme }) => ({
+    padding: theme.spacing(1),
+    textAlign: 'center',
+  }));
+
 
 const Calendar = () => {
-    const [currentDate, setCurrentDate] = useState(moment());
-    const [events, setEvents] = useState(JSON.parse(localStorage.getItem('events')) || []);
-    const [selectedDay, setSelectedDay] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-    const [selectedEvent, setSelectedEvent] = useState(null);
 
+    const [currentDate, setCurrentDate] = useState(moment());
+    
     const startOfMonth = currentDate.clone().startOf('month');
     const endOfMonth = currentDate.clone().endOf('month');
     const startOfWeek = startOfMonth.clone().startOf('week');
     const endOfWeek = endOfMonth.clone().endOf('week');
 
+    const handleKeyDown = (e) => {
+        const isInputFocused = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable;
+        if (isInputFocused) {
+            return;
+        }
+        if (e.key === 'ArrowLeft') {
+            setCurrentDate(currentDate.clone().subtract(1, 'month'))
+        } else if (e.key === 'ArrowRight') {
+            setCurrentDate(currentDate.clone().add(1, 'month'))
+        }
+    };
+    
     useEffect(() => {
-        // Save events to localStorage whenever they change
-        localStorage.setItem('events', JSON.stringify(events));
-    }, [events]);
-
-    const handleDayClick = (day) => {
-        setSelectedDay(day);
-        setSelectedEvent(null); // Clear selected event for new event creation
-        setShowModal(true);
-    };
-
-    const handleEventClick = (event) => {
-        setSelectedEvent(event);
-        setShowModal(true);
-    };
+        
+        window.addEventListener('keydown', handleKeyDown);
+        
+        return () => {
+          window.removeEventListener('keydown', handleKeyDown);
+        };
+      }, [currentDate, setCurrentDate]);
 
     const generateCalendarGrid = () => {
         const days = [];
@@ -55,9 +61,7 @@ const Calendar = () => {
         return days;
     };
 
-    const getEventsForDay = (day) => {
-        return events.filter((event) => moment(event.day).isSame(day, 'day'));
-    };
+    const month = currentDate.format('MMMM');
 
     const isToday = (day) => {
         return day.isSame(moment(), 'day');
@@ -65,85 +69,52 @@ const Calendar = () => {
 
     return (
         <div className="calendar-container">
-            <header className="calendar-header">
+            <header className={`calendar-header ${getBGC(month)}`}>
                 <h2>{currentDate.format('MMMM YYYY')}</h2>
                 <div className="calendar-navigation">
                     <button onClick={() => setCurrentDate(currentDate.clone().subtract(1, 'month'))}>
-                        Prev
+                        <ArrowBackIosIcon />
                     </button>
                     <button onClick={() => setCurrentDate(currentDate.clone().add(1, 'month'))}>
-                        Next
+                        <ArrowForwardIosIcon />
                     </button>
                 </div>
             </header>
 
             {/* Weekday Labels */}
-            <div className="calendar-weekdays">
+            <div className='border'>
+            <Grid container spacing={{xs:1,md:2}} marginBottom={2}>
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((weekday) => (
-                    <div key={weekday} className="weekday">
-                        {weekday}
-                    </div>
+                    
+                    <Grid size={1.68}
+                    key={weekday}
+                    >
+                            <Item className="weekday">{weekday}</Item>
+                            
+                    </Grid>
+                    
                 ))}
-            </div>
+            </Grid>
 
             {/* Calendar Grid */}
-            <div className="calendar-grid">
+            <Grid container spacing={{xs:1,md:2}} >
                 {generateCalendarGrid().map((day, index) => {
                     const isCurrentMonth = day.month() === currentDate.month();
-                    const dayEvents = getEventsForDay(day);
-
+                    
                     return (
-                        <div
-                            key={index}
-                            className={`calendar-cell ${
-                                isCurrentMonth ? 'current-month' : 'other-month'
-                            } ${isToday(day) ? 'today' : ''}`}
-                            onClick={() => handleDayClick(day)}
+                        <Grid size={1.68}
+                        key={index}
                         >
-                            <div className="day-number">{day.date()}</div>
-                            {dayEvents.map((event, idx) => (
-                                <div
-                                    key={idx}
-                                    className="event"
-                                    onClick={(e) => { e.stopPropagation(); handleEventClick(event); }}
-                                    style={{
-                                        backgroundColor: getEventColor(event.type),
-                                        color: 'white',
-                                        padding: '4px 8px',
-                                        borderRadius: '4px',
-                                        marginTop: '4px'
-                                    }}
-                                >
-                                    {event.name}
-                                </div>
-                            ))}
-                        </div>
+                                <EventDrawer day={day} today={isToday(day)} currentMonth={isCurrentMonth}></EventDrawer>
+                                
+                        </Grid>
+                        
+                        
                     );
                 })}
+            </Grid>
             </div>
-
-            {/* Event Modal */}
-            {showModal && (
-                <EventModal
-                    day={selectedDay}
-                    setShowModal={setShowModal}
-                    setEvents={setEvents}
-                    events={events}
-                    onAddEvent={(eventData) => setEvents([...events, eventData])}
-                    onUpdateEvent={(updatedEvent) => {
-                        const updatedEvents = events.map((event) =>
-                            event.id === updatedEvent.id ? updatedEvent : event
-                        );
-                        setEvents(updatedEvents);
-                    }}
-                    onDeleteEvent={(eventId) => {
-                        const updatedEvents = events.filter((event) => event.id !== eventId);
-                        setEvents(updatedEvents);
-                    }}
-                    selectedEvent={selectedEvent}
-                    setSelectedEvent={setSelectedEvent}
-                />
-            )}
+            
         </div>
     );
 };

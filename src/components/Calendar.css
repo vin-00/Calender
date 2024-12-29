@@ -1,28 +1,77 @@
 /* Calendar.css */
 .calendar-container {
-    width: 80%;
+    width: 60%;
     margin: 20px auto;
     font-family: Arial, sans-serif;
+    
+    padding: 1rem 1rem 2rem 2rem;
+    border-radius: 20px;
 }
 
+.jan{
+    background-color: #B0C4DE;
+}
+.feb{
+    background-color: #FF69B4;
+}
+.mar{
+    background-color:  #98FB98;
+}
+.apr{
+    background-color: #FFD700;
+}
+.may{
+    background-color: #FF7F50;
+}
+.jun{
+    background-color:  #00FA9A;
+}
+.jul{
+    background-color: #FF4500 ;
+}
+.aug{
+    background-color: #FFDAB9;
+}
+.sep{
+    background-color: #FFA07A;
+}
+.oct{
+    background-color: #FF8C00;
+}
+.nov{
+    background-color: #8B4513;
+}
+.dec{
+    background-color: #4682B4 ;
+}
+
+.border{
+    padding: 20px;
+}
 .calendar-header {
+    font-size: 1.2rem;
+    padding:20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom-color: white;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
 }
 
 .calendar-navigation button {
-    padding: 10px 20px;
-    background-color: #4285f4;
-    color: white;
+    margin:10px;
+    padding: 9px ;
+    background-color: white;
+    color: black;
     border: none;
     border-radius: 4px;
     cursor: pointer;
 }
 
 .calendar-navigation button:hover {
-    background-color: #357ae8;
+    background-color: #bbbbbb;
 }
 
 .calendar-weekdays {
@@ -36,6 +85,12 @@
     padding: 10px 0;
 }
 
+.weekday{
+    font-size: 1.1rem;
+    background-color: #797979 !important;
+    color:#fff !important;
+}
+
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -45,12 +100,14 @@
 }
 
 .calendar-cell {
+    font-size: 1.1rem;
     background-color: white;
-    position: relative;
+    /* position: relative; */
     padding: 10px;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    /* align-items: center; */
+    /* justify-content: center; */
     cursor: pointer;
 }
 
@@ -91,18 +148,13 @@
     background-color: #357ae8;
 }
 
-/* Highlight today's date */
 .today {
-    background-color: #79c5ff; /* Yellow background */
-    /* border-radius: 50%; */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #3dabff !important;
+    color: white !important; 
 }
 
 .today:hover{
-    background-color: #98d2ff;
-}
-.today .day-number {
-    color: white;
+    background-color: #98d2ff !important; 
 }
 
 .event-modal {
@@ -161,3 +213,14 @@
 .modal-actions button:hover {
     background-color: #357ae8;
 }
+
+@media screen and (max-width:800px){
+    .calendar-container{
+        width: 75%;
+      }
+}
+@media screen and (max-width: 650px) {
+    .calendar-container{
+      width: 92%;
+    }
+  }
