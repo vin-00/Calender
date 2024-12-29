@@ -55,12 +55,12 @@ DayWise is a user-friendly event management application designed to help you eff
 
 4. Start the development server:
    ```bash
-   npm start
+   npm run dev
    ```
 
 5. Open your browser and go to:
    ```
-   http://localhost:3000
+   http://localhost:5173
    ```
 
 ## How to Use
